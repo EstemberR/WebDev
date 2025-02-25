@@ -2,6 +2,9 @@
 @section('title', 'Enrollment')
 @section('Pages', 'Enrollment')
 @section('content')
+<!-- Add these lines for DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css">
 <div class="panel-header panel-header-sm">
 </div>
 <div class="content">
@@ -11,10 +14,11 @@
                 <div class="card mb-4">
                     <div class="card-header pb-0">
                         <h6>Available Students</h6>
+                       
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table class="table align-items-center mb-0">
+                            <table id="availableStudentsTable" class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
                                         <th>Student ID</th>
@@ -24,7 +28,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Loop through available students -->
                                     @foreach($students as $student)
                                     <tr>
                                         <td>{{ $student->student_id }}</td>
@@ -54,7 +57,7 @@
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table class="table align-items-center mb-0">
+                            <table id="enrolledStudentsTable" class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
                                         <th>Student ID</th>
@@ -191,6 +194,10 @@
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
 <script>
 function enrollStudent(studentId) {
     document.getElementById('enrollStudentId').value = studentId;
@@ -313,5 +320,133 @@ document.getElementById('subjectForm').addEventListener('submit', function(e) {
         submitButton.disabled = false;
     });
 });
+
+$(document).ready(function() {
+    // Initialize Available Students DataTable
+    $('#availableStudentsTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        order: [[0, 'asc']],
+        responsive: true,
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search students...",
+        }
+    });
+
+    // Initialize Enrolled Students DataTable
+    $('#enrolledStudentsTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        order: [[0, 'asc']],
+        responsive: true,
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search enrolled students...",
+        }
+    });
+});
 </script>
+
+<style>
+/* DataTables Custom Styling */
+.dataTables_wrapper {
+    padding: 20px;
+}
+
+.dataTables_length {
+    margin-bottom: 15px;
+}
+
+.dataTables_length select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 30px 6px 10px;
+    margin: 0 5px;
+    background-color: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M8 11l-4-4h8l-4 4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.dataTables_filter {
+    margin-bottom: 15px;
+}
+
+.dataTables_filter input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-left: 8px;
+    width: 200px;
+}
+
+.dataTables_info {
+    padding-top: 10px;
+}
+
+.dataTables_paginate {
+    padding-top: 10px;
+}
+
+.paginate_button {
+    padding: 5px 12px;
+    margin: 0 2px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+}
+
+.paginate_button.current {
+    background: linear-gradient(310deg, #ea580c, #facc15);
+    color: white;
+    border: none;
+}
+
+.paginate_button:hover:not(.current) {
+    background: #f5f5f5;
+}
+
+.paginate_button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Table Styling */
+.table thead th {
+    font-weight: 600;
+    padding: 12px 16px;
+    border-bottom: 2px solid #ddd;
+}
+
+.table tbody td {
+    padding: 12px 16px;
+    vertical-align: middle;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dataTables_length,
+    .dataTables_filter {
+        text-align: left;
+        width: 100%;
+    }
+    
+    .dataTables_filter input {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+</style>
 @endpush

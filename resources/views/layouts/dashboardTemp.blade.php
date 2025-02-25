@@ -217,6 +217,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ Request::routeIs('enrollment.index') ? 'active bg-gradient-white text-dark' : 'text-dark' }}" 
+                       href="{{ route('enrollment.index') }}">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-list text-dark opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Enrollment</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ Request::routeIs('students.index') ? 'active bg-gradient-white text-dark' : 'text-dark' }}" 
                        href="{{ route('students.index') }}">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">

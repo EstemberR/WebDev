@@ -2,6 +2,15 @@
 @section('title', 'Students')
 @section('Pages', 'Students')
 @section('content')
+<!-- Add these lines for DataTables -->
+<link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<!-- Add DataTables CSS and JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 <div class="panel-header panel-header-sm">
 </div>
 <div class="content">
@@ -19,7 +28,7 @@
                 </div>
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table class="table align-items-center mb-0">
+                            <table id="studentsTable" class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
                                         <th>Student ID</th>
@@ -384,6 +393,35 @@ document.getElementById('editStudentForm').addEventListener('submit', function(e
         submitButton.disabled = false;
     });
 });
+
+// Initialize DataTables
+$(document).ready(function() {
+    const studentsTable = $('#studentsTable').DataTable({
+        dom: '<"row"<"col-md-6"l><"col-md-6"f>>' +
+             '<"row"<"col-12"tr>>' +
+             '<"row"<"col-md-5"i><"col-md-7"p>>',
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        order: [[0, 'asc']],
+        responsive: true,
+        pagingType: "simple_numbers",
+        language: {
+            search: "",
+            searchPlaceholder: "Search...",
+            paginate: {
+                first: '<i class="fas fa-angle-double-left"></i>',
+                previous: '<i class="fas fa-angle-left"></i>',
+                next: '<i class="fas fa-angle-right"></i>',
+                last: '<i class="fas fa-angle-double-right"></i>'
+            }
+        }
+    });
+
+    // Custom search functionality
+    $('#customSearch').on('keyup', function() {
+        studentsTable.search(this.value).draw();
+    });
+});
 </script>
 @endpush
 
@@ -408,6 +446,107 @@ document.getElementById('editStudentForm').addEventListener('submit', function(e
 
     .card-header .btn.bg-gradient-primary i {
         margin-right: 0.5rem;
+    }
+
+    /* DataTables Custom Styling */
+    .dataTables_wrapper {
+        padding: 20px;
+    }
+
+    .dataTables_length {
+        margin-bottom: 15px;
+    }
+
+    .dataTables_length label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    .dataTables_length select {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 6px 30px 6px 10px;
+        margin: 0;
+        background-color: white;
+        height: 38px;
+        font-size: 0.875rem;
+        min-width: 80px;
+    }
+
+    /* Adjust the container for better alignment */
+    .dataTables_wrapper .row:first-child {
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .dataTables_wrapper .col-md-6:first-child {
+        display: flex;
+        align-items: center;
+    }
+
+    .dataTables_info {
+        font-size: 0.875rem;
+        padding-top: 0.5rem;
+    }
+
+    .dataTables_paginate {
+        margin-top: 1rem;
+        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .paginate_button {
+        padding: 8px 12px;
+        margin: 0 2px;
+        border-radius: 4px;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: #333;
+    }
+
+    .paginate_button.current {
+        background: linear-gradient(310deg, #ea580c, #facc15);
+        color: white;
+    }
+
+    .paginate_button:hover:not(.current) {
+        background: white !important;
+        color: #ea580c;
+    }
+
+    .paginate_button.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        color: #999;
+    }
+
+    /* Table header styling */
+    .table thead th {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    /* Entries text alignment */
+    .dataTables_length {
+        display: flex;
+        align-items: center;
+    }
+
+    .dataTables_length label {
+        white-space: nowrap;
     }
 </style>
 
