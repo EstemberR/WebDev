@@ -71,4 +71,32 @@ class GradeController extends Controller
         if ($percentage >= 75) return 3.00;
         return 5.00;
     }
+
+    public function destroy($studentId, $subjectId)
+    {
+        try {
+            $grade = Grades::where('student_id', $studentId)
+                         ->where('subject_id', $subjectId)
+                         ->first();
+
+            if (!$grade) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Grade not found'
+                ]);
+            }
+
+            $grade->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Grade deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting grade'
+            ]);
+        }
+    }
 }

@@ -54,6 +54,12 @@
                                                             onclick="manageGrades({{ $student->id }}, {{ $subject->id }}, '{{ $grade ? $grade->midterm : '' }}', '{{ $grade ? $grade->finals : '' }}')">
                                                         {{ $grade ? 'Edit' : 'Add' }} Grades
                                                     </button>
+                                                    @if($grade)
+                                                        <button class="btn bg-gradient-danger btn-sm" 
+                                                                onclick="confirmDeleteGrade({{ $student->id }}, {{ $subject->id }})">
+                                                            <i class="fas fa-trash"></i> Delete
+                                                        </button>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -156,6 +162,58 @@ document.getElementById('gradeForm').addEventListener('submit', function(e) {
         submitButton.disabled = false;
     });
 });
+
+function confirmDeleteGrade(studentId, subjectId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will permanently delete the student's grade for this subject.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ea580c',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteGrade(studentId, subjectId);
+        }
+    });
+}
+
+function deleteGrade(studentId, subjectId) {
+    fetch(`/grades/delete/${studentId}/${subjectId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: data.message,
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error deleting grade'
+        });
+    });
+}
 </script>
 @endpush
 
@@ -169,6 +227,21 @@ document.getElementById('gradeForm').addEventListener('submit', function(e) {
     .bg-gradient-warning:hover {
         background: linear-gradient(310deg, #c2410c, #eab308);
         transform: translateY(-1px);
+    }
+
+    .bg-gradient-danger {
+        background: linear-gradient(310deg, #dc2626, #ef4444);
+        color: white;
+        border: none;
+    }
+
+    .bg-gradient-danger:hover {
+        background: linear-gradient(310deg, #b91c1c, #dc2626);
+        transform: translateY(-1px);
+    }
+
+    .btn-sm {
+        margin: 0 2px;
     }
 </style>
 

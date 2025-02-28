@@ -80,6 +80,9 @@
                                             <button class="btn bg-gradient-primary btn-sm" onclick="manageSubjects({{ $student->id }})">
                                                 Manage Subjects
                                             </button>
+                                            <button class="btn bg-gradient-danger btn-sm" onclick="confirmUnenroll({{ $student->id }})">
+                                                <i class="fas fa-user-minus"></i> Unenroll
+                                            </button>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -320,6 +323,54 @@ document.getElementById('subjectForm').addEventListener('submit', function(e) {
         submitButton.disabled = false;
     });
 });
+
+function confirmUnenroll(studentId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will unenroll the student from all subjects and delete their grades!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, unenroll!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/enrollment/unenroll/${studentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Unenrolled!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error unenrolling student'
+                });
+            });
+        }
+    });
+}
 
 $(document).ready(function() {
     // Initialize Available Students DataTable
