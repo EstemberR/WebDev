@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
-                    <div class="card-header pb-0 d-flex align-items-center justify-content-between">
+                    <div class="card-header pb-4 d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
                             <h6 class="mb-0">Subject Lists</h6>
                             <button type="button" class="text-white bg-gradient-primary btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
@@ -311,7 +311,38 @@ document.getElementById('editSubjectForm').addEventListener('submit', function(e
 </script>
 @endpush
 
+@push('styles')
 <style>
+    .table-responsive {
+        max-height: calc(100vh - 280px);
+        overflow-y: auto;
+    }
+    
+    .table thead th {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 1;
+    }
+
+    /* Custom scrollbar styles */
+    .table-responsive::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
     /* Add Subject Button Styling */
     .card-header .btn.bg-gradient-primary {
         background: var(--gray-light);
@@ -340,5 +371,6 @@ document.getElementById('editSubjectForm').addEventListener('submit', function(e
         color: var(--light);
     }
 </style>
+@endpush
 
 @endsection

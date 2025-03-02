@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
-                    <div class="card-header pb-0 d-flex align-items-center justify-content-between">
+                    <div class="card-header pb-4 d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
                         <h6 class="mb-0">Student Lists</h6>
                         <button type="button" class="text-white bg-gradient-primary btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#addStudentModal">

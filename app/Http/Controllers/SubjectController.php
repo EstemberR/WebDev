@@ -76,7 +76,17 @@ class SubjectController extends Controller
 
     public function destroy(Subjects $subject)
     {
-        $subject->delete();
-        return redirect()->back()->with('success', 'Subject deleted successfully');
+        try {
+            $subject->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Subject deleted successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting subject: ' . $e->getMessage()
+            ], 422);
+        }
     }
 }

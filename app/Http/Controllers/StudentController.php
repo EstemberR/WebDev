@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student\Students;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class StudentController extends Controller
 {
@@ -19,7 +20,17 @@ class StudentController extends Controller
             $validated = $request->validate([
                 'student_id' => 'required|unique:students',
                 'name' => 'required',
-                'email' => 'required|email|unique:students',
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:students',
+                    function ($attribute, $value, $fail) {
+                        $domain = substr(strrchr($value, "@"), 1);
+                        if ($domain !== 'student.buksu.edu.ph') {
+                            $fail('The email must be a valid BukSU student email address (@student.buksu.edu.ph).');
+                        }
+                    },
+                ],
                 'status' => 'required|in:active,inactive'
             ]);
 
@@ -32,7 +43,7 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error adding student. ' . $e->getMessage()
+                'message' => 'Error. ' . $e->getMessage()
             ], 422);
         }
     }
@@ -53,7 +64,17 @@ class StudentController extends Controller
             $validated = $request->validate([
                 'student_id' => 'required|unique:students,student_id,' . $student->id,
                 'name' => 'required',
-                'email' => 'required|email|unique:students,email,' . $student->id,
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:students,email,' . $student->id,
+                    function ($attribute, $value, $fail) {
+                        $domain = substr(strrchr($value, "@"), 1);
+                        if ($domain !== 'student.buksu.edu.ph') {
+                            $fail('The email must be a valid BukSU student email address (@student.buksu.edu.ph).');
+                        }
+                    },
+                ],
                 'status' => 'required|in:active,inactive'
             ]);
 
@@ -74,15 +95,27 @@ class StudentController extends Controller
     public function destroy(Students $student)
     {
         try {
+            // First delete related records
+            $student->grades()->delete();  // Delete all grades
+            $student->subjects()->detach(); // Remove subject relationships
+            
+            // Delete the student record from users table if exists
+            $user = User::where('email', $student->email)->first();
+            if ($user) {
+                $user->delete();
+            }
+            
+            // Finally delete the student
             $student->delete();
+            
             return response()->json([
                 'success' => true,
-                'message' => 'Student deleted successfully!'
+                'message' => 'Student and all related records deleted successfully!'
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error deleting student. ' . $e->getMessage()
+                'message' => 'Error deleting student: ' . $e->getMessage()
             ], 422);
         }
     }

@@ -27,8 +27,22 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'email', function ($attribute, $value, $fail) {
+                $domain = substr(strrchr($value, "@"), 1);
+                if (!in_array($domain, ['student.buksu.edu.ph', 'buksu.edu.ph'])) {
+                    $fail('Please use your BukSU email address.');
+                }
+            }],
             'password' => ['required', 'string'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.required' => 'Email address is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'password.required' => 'Password is required.',
         ];
     }
 
@@ -41,11 +55,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'The provided credentials do not match our records or your account may have been deleted.',
             ]);
         }
 

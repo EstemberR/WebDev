@@ -14,8 +14,14 @@ class StudentDashboardController extends Controller
             ->where('email', Auth::user()->email)
             ->first();
 
-        $enrolledSubjects = $student->subjects;
+        if (!$student) {
+            Auth::logout();
+            return redirect()->route('login')->withErrors([
+                'email' => 'Student record not found. Please contact the administrator.',
+            ]);
+        }
 
+        $enrolledSubjects = $student->subjects;
         return view('Students.StudentDashboard', compact('enrolledSubjects'));
     }
 

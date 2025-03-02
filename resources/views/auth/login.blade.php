@@ -13,12 +13,20 @@
                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                         <input type="email" 
                                name="email" 
-                               class="form-control" 
+                               class="form-control @error('email') is-invalid @enderror" 
                                placeholder="Email" 
                                value="{{ old('email') }}" 
                                required>
+                        @error('email')
+                            <div class="invalid-feedback" style="display: block;">
+                                <strong>{{ $message }}</strong>
+                                @if(str_contains($message, 'do not match'))
+                                    <br>
+                                    <small>Please check your email and password, or contact an administrator if you believe your account was deleted.</small>
+                                @endif
+                            </div>
+                        @enderror
                     </div>
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
 
                 <div class="mb-3">
@@ -27,11 +35,15 @@
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                         <input type="password" 
                                name="password" 
-                               class="form-control" 
+                               class="form-control @error('password') is-invalid @enderror" 
                                placeholder="Password" 
                                required>
+                        @error('password')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
-                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
 
                 <div class="form-check form-switch">

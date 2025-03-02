@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Providers\RouteServiceProvider;
+use App\Models\Student\Students;
+use Illuminate\Support\Facades\DB;
 
 class RegisteredUserController extends Controller
 {
@@ -32,43 +34,75 @@ class RegisteredUserController extends Controller
     {
         $userType = null;
         
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users',
-                function ($attribute, $value, $fail) use (&$userType) {
-                    $domain = substr(strrchr($value, "@"), 1);
-                    if (!in_array($domain, ['student.buksu.edu.ph', 'buksu.edu.ph'])) {
-                        $fail('The email must be a valid BukSU email address.');
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    'unique:users',
+                    function ($attribute, $value, $fail) use (&$userType) {
+                        $domain = substr(strrchr($value, "@"), 1);
+                        if (!in_array($domain, ['student.buksu.edu.ph', 'buksu.edu.ph'])) {
+                            $fail('The email must be a valid BukSU email address.');
+                        }
+                        
+                        $userType = $domain === 'student.buksu.edu.ph' ? 'student' : 'instructor';
+                    },
+                ],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+
+            return DB::transaction(function () use ($request, $userType) {
+                try {
+                    // First check if student record exists for student email
+                    if ($userType === 'student') {
+                        $existingStudent = Students::where('email', $request->email)->first();
+                        if ($existingStudent) {
+                            throw new \Exception('Student record already exists with this email.');
+                        }
                     }
-                    
-                    // Set user type based on email domain
-                    $userType = $domain === 'student.buksu.edu.ph' ? 'student' : 'instructor';
-                },
-            ],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'user_type' => $userType,
-        ]);
+                    // Create user
+                    $user = User::create([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'password' => Hash::make($request->password),
+                        'user_type' => $userType,
+                    ]);
 
-        event(new Registered($user));
+                    // Create student record if user type is student
+                    if ($userType === 'student') {
+                        $student = Students::create([
+                            'student_id' => 'STD' . time(),
+                            'name' => $request->name,
+                            'email' => $request->email,
+                            'status' => 'active'
+                        ]);
 
-        Auth::login($user);
+                        if (!$student) {
+                            throw new \Exception('Failed to create student record');
+                        }
+                    }
 
-        // Redirect based on user type
-        if ($user->user_type === 'student') {
-            return redirect()->intended(route('student.dashboard'));
+                    event(new Registered($user));
+                    Auth::login($user);
+
+                    return $user->user_type === 'student'
+                        ? redirect()->intended(route('student.dashboard'))
+                        : redirect()->intended(route('dashboard'));
+
+                } catch (\Exception $e) {
+                    throw $e;
+                }
+            });
+
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->withErrors(['email' => 'Registration failed: ' . $e->getMessage()]);
         }
-
-        return redirect()->intended(route('dashboard'));
     }
 }
