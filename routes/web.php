@@ -46,7 +46,7 @@ Route::middleware(['auth', 'user.type:instructor'])->group(function () {
     
     // Grade routes
     Route::get('/grades', [GradeController::class, 'index'])->name('grades.index');
-    Route::post('/grades', [GradeController::class, 'store'])->name('grades.store');
+    Route::post('/grades/store', [GradeController::class, 'store'])->name('grades.store');
     Route::put('/grades/{grade}', [GradeController::class, 'update'])->name('grades.update');
     Route::delete('/grades/{grade}', [GradeController::class, 'destroy'])->name('grades.destroy');
     
@@ -59,5 +59,7 @@ Route::middleware(['auth', 'user.type:instructor'])->group(function () {
 });
 
 Route::delete('/grades/delete/{student}/{subject}', [GradeController::class, 'destroy'])->name('grades.destroy');
+
+Route::get('/grades/subjects/{student_id}', [GradeController::class, 'getSubjects'])->name('grades.subjects');
 
 require __DIR__.'/auth.php';

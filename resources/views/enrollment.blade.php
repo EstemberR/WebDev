@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
-                    <div class="card-header pb-0">
+                    <div class="card-header pb-3">
                         <h6>Available Students</h6>
                        
                     </div>
@@ -52,7 +52,7 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card mb-4">
-                    <div class="card-header pb-0">
+                    <div class="card-header pb-3">
                         <h6>Enrolled Students</h6>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
@@ -401,7 +401,7 @@ $(document).ready(function() {
         responsive: true,
         language: {
             search: "_INPUT_",
-            searchPlaceholder: "Search enrolled students...",
+            searchPlaceholder: "Enrolled students...",
         }
     });
 });
@@ -438,7 +438,7 @@ $(document).ready(function() {
     border-radius: 4px;
     padding: 6px 12px;
     margin-left: 8px;
-    width: 200px;
+    width: 300px;
 }
 
 .dataTables_info {

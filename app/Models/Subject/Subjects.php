@@ -5,6 +5,7 @@ namespace App\Models\Subject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Student\Students;
+use App\Models\Grade\Grades;
 
 class Subjects extends Model
 {
@@ -24,5 +25,10 @@ class Subjects extends Model
         return $this->belongsToMany(Students::class, 'student_subject', 'subject_id', 'student_id')
                     ->withPivot('grade')
                     ->withTimestamps();
+    }
+
+    public function grades()
+    {
+        return $this->hasMany(Grades::class, 'subject_id');
     }
 }

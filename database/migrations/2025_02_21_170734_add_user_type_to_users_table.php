@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('user_type')->after('email')->nullable();
-        });
+        // Schema::table('users', function (Blueprint $table) {
+        //     $table->string('user_type')->after('email')->nullable();
+        // });
+        // Check if the column doesn't exist before adding it
+        if (!Schema::hasColumn('users', 'user_type')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('user_type')->after('email')->nullable();
+            });
+        }
     }
 
     /**
@@ -22,6 +28,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            // // $table->dropColumn('user_type');
+
+            // Schema::dropIfExists('users');
             $table->dropColumn('user_type');
         });
     }

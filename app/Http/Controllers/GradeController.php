@@ -99,4 +99,46 @@ class GradeController extends Controller
             ]);
         }
     }
+
+    public function getStudentSubjects($studentId)
+    {
+        $student = Student::findOrFail($studentId);
+        $subjects = $student->subjects()->with('grades')->get()->map(function($subject) use ($studentId) {
+            return [
+                'id' => $subject->id,
+                'name' => $subject->name,
+                'grade' => $subject->grades->where('student_id', $studentId)->first()
+            ];
+        });
+        
+        return response()->json($subjects);
+    }
+
+    public function getSubjects($studentId)
+    {
+        try {
+            $student = Students::findOrFail($studentId);
+            $subjects = $student->subjects()->with(['grades' => function($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            }])->get();
+
+            $formattedSubjects = $subjects->map(function($subject) {
+                $grade = $subject->grades->first();
+                return [
+                    'id' => $subject->id,
+                    'name' => $subject->name,
+                    'grade' => $grade ? [
+                        'midterm' => $grade->midterm,
+                        'finals' => $grade->finals,
+                        'average' => $grade->average,
+                        'remarks' => $grade->remarks
+                    ] : null
+                ];
+            });
+
+            return response()->json($formattedSubjects);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }
