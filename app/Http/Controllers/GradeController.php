@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Grade\Grades;
 use App\Models\Student\Students;
 use Illuminate\Http\Request;
+use App\Http\Requests\Grade\StoreGradeRequest;
 
 class GradeController extends Controller
 {
@@ -14,16 +15,11 @@ class GradeController extends Controller
         return view('Grade.Grade', compact('students'));
     }
 
-    public function store(Request $request)
+    public function store(StoreGradeRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'student_id' => 'required|exists:students,id',
-                'subject_id' => 'required|exists:subjects,id',
-                'midterm' => 'required|numeric|min:1|max:5',
-                'finals' => 'required|numeric|min:1|max:5'
-            ]);
-
+            $validated = $request->validated();
+            
             // Calculate average of grade points directly
             $average = ($validated['midterm'] + $validated['finals']) / 2;
             

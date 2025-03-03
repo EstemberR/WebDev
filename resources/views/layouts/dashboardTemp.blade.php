@@ -56,13 +56,27 @@
         box-shadow: 4px 0 8px rgba(0, 0, 0, 0.2) !important;
     }
     .logout-btn {
+        background: transparent;
         transition: all 0.3s ease;
         border-radius: 0.5rem;
-        margin: 0 1rem;
+        margin: 0.5rem 1rem;
+        padding: 0.75rem 1rem;
+        color: #344767;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .logout-btn:hover {
-        background: linear-gradient(310deg, #ea580c, #facc15);
+        background: #dc3545 !important;
+        color: white !important;
+    }
+
+    .logout-btn:hover svg {
+        fill: white !important;
+    }
+
+    .logout-btn svg {
+        fill: #344767;
+        transition: all 0.3s ease;
     }
 
     .logout-btn:hover .icon {
@@ -294,28 +308,16 @@
                 </li>
             @endif
             <li class="nav-item mt-3">
-                <form method="POST" action="{{ route('logout') }}" id="logout-form">
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
-                    <a class="nav-link d-flex align-items-center logout-btn" href="#" 
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <svg width="16px" height="16px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <title>logout</title>
-                                <g stroke="none" stroke-width="2" fill="none" fill-rule="evenodd">
-                                    <g transform="translate(-2020.000000, -442.000000)" fill="#FFFFFF" fill-rule="nonzero">
-                                        <g transform="translate(1716.000000, 291.000000)">
-                                            <g transform="translate(304.000000, 151.000000)">
-                                                <path class="color-background opacity-6" d="M15.0002,6.99999997 C15.0002,4.23857625 17.2388,2 20.0002,2 L32.0002,2 C34.7616,2 37.0002,4.23857625 37.0002,6.99999997 L37.0002,32.9999999 C37.0002,35.7614237 34.7616,38 32.0002,38 L20.0002,38 C17.2388,38 15.0002,35.7614237 15.0002,32.9999999 L15.0002,26.9999999 L18.0002,26.9999999 L18.0002,32.9999999 L34.0002,32.9999999 L34.0002,6.99999997 L18.0002,6.99999997 L18.0002,12.9999999 L15.0002,12.9999999 L15.0002,6.99999997 Z"></path>
-                                                <path class="color-background" d="M15.7071068,20.7071067 C15.3165825,21.097631 14.6834175,21.097631 14.2928932,20.7071067 L4.29289322,10.7071067 C3.90236893,10.3165825 3.90236893,9.68341751 4.29289322,9.29289322 L14.2928932,-0.707106781 C14.6834175,-1.09763107 15.3165825,-1.09763107 15.7071068,-0.707106781 C16.0976311,-0.316582489 16.0976311,0.316582489 15.7071068,0.707106781 L7.41421356,9 L24,9 C24.5522847,9 25,9.44771525 25,10 L25,20 C25,20.5522847 24.5522847,21 24,21 L7.41421356,21 L15.7071068,29.2928932 C16.0976311,29.6834175 16.0976311,30.3165825 15.7071068,30.7071068 C15.3165825,31.0976311 14.6834175,31.0976311 14.2928932,30.7071068 L4.29289322,20.7071067 C3.90236893,20.3165825 3.90236893,19.6834175 4.29289322,19.2928932 L14.2928932,9.29289322 C14.6834175,8.90236893 15.3165825,8.90236893 15.7071068,9.29289322 C16.0976311,9.68341751 16.0976311,10.3165825 15.7071068,10.7071067 L7.41421356,19 L22,19 L22,11 L7.41421356,11 L15.7071068,19.2928932 C16.0976311,19.6834175 16.0976311,20.3165825 15.7071068,20.7071067 Z" transform="translate(14.500000, 15.000000) scale(-1, 1) translate(-14.500000, -15.000000)"></path>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <span class="nav-link-text ms-1">Sign Out</span>
-                    </a>
                 </form>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+                   class="nav-link {{ Request::routeIs('logout') ? 'active bg-gradient-white text-dark' : 'text-dark' }}">
+                    <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-sign-out-alt text-dark opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Sign Out</span>
+                </a>
             </li>
         </ul>
     </div>

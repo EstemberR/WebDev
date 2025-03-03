@@ -48,14 +48,16 @@
                                         <td>
                                             <a class="btn bg-gradient-warning btn-sm" 
                                                onclick="editStudent('{{ $student->id }}', '{{ $student->student_id }}', '{{ $student->name }}', '{{ $student->email }}', '{{ $student->status }}')">
-                                                <i class="fas fa-edit"></i> Edit
+                                                <!-- <i class="fas fa-edit"></i> Edit -->
+                                                 Edit
                                             </a>
                                             <form id="delete-form-{{ $student->id }}" action="{{ route('students.destroy', $student) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn bg-gradient-danger btn-sm" 
                                                         onclick="confirmDelete('delete-form-{{ $student->id }}')">
-                                                    <i class="fas fa-trash"></i> Delete
+                                                    <!-- <i class="fas fa-trash"></i> Delete -->
+                                                     Delete
                                                 </button>
                                             </form>
                                         </td>

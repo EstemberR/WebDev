@@ -41,14 +41,16 @@
                                         <td>
                                             <button class="btn bg-gradient-warning btn-sm" 
                                                     onclick="editSubject('{{ $subject->id }}', '{{ $subject->subject_code }}', '{{ $subject->name }}', '{{ $subject->description }}', '{{ $subject->units }}', '{{ $subject->schedule }}')">
-                                                <i class="fas fa-edit"></i> Edit
+                                                <!-- <i class="fas fa-edit"></i> Edit -->
+                                                 Edit
                                             </button>
                                             <form id="delete-form-{{ $subject->id }}" action="{{ route('subjects.destroy', $subject) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn bg-gradient-danger btn-sm" 
                                                         onclick="confirmDelete('delete-form-{{ $subject->id }}')">
-                                                    <i class="fas fa-trash"></i> Delete
+                                                    <!-- <i class="fas fa-trash"></i> Delete -->
+                                                     Delete
                                                 </button>
                                             </form>
                                         </td>

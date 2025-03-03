@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Subject\Students;
 use App\Models\Subject\Subjects;
 use Illuminate\Http\Request;
+use App\Http\Requests\Subject\StoreSubjectRequest;
 
 class SubjectController extends Controller
 {
@@ -14,18 +15,10 @@ class SubjectController extends Controller
         return view('Subjects.Subjects', compact('subjects'));
     }
 
-    public function store(Request $request)
+    public function store(StoreSubjectRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'subject_code' => 'required|unique:subjects',
-                'name' => 'required',
-                'description' => 'nullable',
-                'units' => 'required|integer',
-                'schedule' => 'nullable'
-            ]);
-
-            Subjects::create($validated);
+            Subjects::create($request->validated());
             
             return response()->json([
                 'success' => true,

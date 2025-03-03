@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student\Students;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\Student\StoreStudentRequest;
 
 class StudentController extends Controller
 {
@@ -14,27 +15,10 @@ class StudentController extends Controller
         return view('Students.Students', compact('students'));
     }
 
-    public function store(Request $request)
+    public function store(StoreStudentRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'student_id' => 'required|unique:students',
-                'name' => 'required',
-                'email' => [
-                    'required',
-                    'email',
-                    'unique:students',
-                    function ($attribute, $value, $fail) {
-                        $domain = substr(strrchr($value, "@"), 1);
-                        if ($domain !== 'student.buksu.edu.ph') {
-                            $fail('The email must be a valid BukSU student email address (@student.buksu.edu.ph).');
-                        }
-                    },
-                ],
-                'status' => 'required|in:active,inactive'
-            ]);
-
-            Students::create($validated);
+            Students::create($request->validated());
             
             return response()->json([
                 'success' => true,
