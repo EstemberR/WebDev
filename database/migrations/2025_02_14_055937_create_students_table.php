@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }

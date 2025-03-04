@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Student;
 
 use Illuminate\Http\Request;
 use App\Models\Student\Students;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 class StudentDashboardController extends Controller
 {

@@ -308,16 +308,15 @@
                 </li>
             @endif
             <li class="nav-item mt-3">
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
-                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
-                   class="nav-link {{ Request::routeIs('logout') ? 'active bg-gradient-white text-dark' : 'text-dark' }}">
+                <button type="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link w-100 text-start border-0 bg-transparent">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-sign-out-alt text-dark opacity-10"></i>
                     </div>
                     <span class="nav-link-text ms-1">Sign Out</span>
-                </a>
+                </button>
             </li>
         </ul>
     </div>

@@ -250,10 +250,17 @@ document.getElementById('addStudentForm').addEventListener('submit', function(e)
         method: 'POST',
         body: new FormData(this),
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             Swal.fire({
@@ -266,18 +273,21 @@ document.getElementById('addStudentForm').addEventListener('submit', function(e)
                 location.reload();
             });
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: data.message || 'Error adding student'
-            });
+            throw new Error(data.message || 'Error adding student');
         }
     })
     .catch(error => {
+        let errorMessage = 'Error adding student';
+        if (error.errors) {
+            errorMessage = Object.values(error.errors).flat().join('<br>');
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
         Swal.fire({
             icon: 'error',
-            title: 'Error',
-            text: 'Error adding student'
+            title: 'Validation Error',
+            html: errorMessage,
+            confirmButtonColor: '#ea580c'
         });
     })
     .finally(() => {

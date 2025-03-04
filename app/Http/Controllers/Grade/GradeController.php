@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Grade;
 
 use App\Models\Grade\Grades;
 use App\Models\Student\Students;
 use Illuminate\Http\Request;
-use App\Http\Requests\Grade\StoreGradeRequest;
+use App\Http\Requests\Grade\StoreGrade;
+use App\Http\Controllers\Controller;
 
 class GradeController extends Controller
 {
@@ -15,7 +16,7 @@ class GradeController extends Controller
         return view('Grade.Grade', compact('students'));
     }
 
-    public function store(StoreGradeRequest $request)
+    public function store(StoreGrade $request)
     {
         try {
             $validated = $request->validated();

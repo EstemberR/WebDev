@@ -4,7 +4,7 @@ namespace App\Http\Requests\Grade;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreGradeRequest extends FormRequest
+class StoreGrade extends FormRequest
 {
     public function authorize(): bool
     {

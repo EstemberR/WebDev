@@ -4,32 +4,33 @@ namespace App\Http\Requests\Subject;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSubjectRequest extends FormRequest
+class StoreSubject extends FormRequest
 {
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
-            'subject_code' => 'required|unique:subjects',
+            'subject_code' => 'required|unique:subjects,subject_code',
             'name' => 'required',
             'description' => 'nullable',
-            'units' => 'required|integer',
+            'units' => 'required|integer|min:1',
             'schedule' => 'nullable'
         ];
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [
             'subject_code.required' => 'Subject code is required',
-            'subject_code.unique' => 'This subject code already exists',
+            'subject_code.unique' => 'Subject code already exists',
             'name.required' => 'Subject name is required',
-            'units.required' => 'Number of units is required',
-            'units.integer' => 'Units must be a whole number'
+            'units.required' => 'Units is required',
+            'units.integer' => 'Units must be a number',
+            'units.min' => 'Units must be at least 1'
         ];
     }
 }

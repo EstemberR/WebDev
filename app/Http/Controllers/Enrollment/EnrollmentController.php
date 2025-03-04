@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Enrollment;
 
 use App\Models\Student\Students;
 use App\Models\Subject\Subjects;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class EnrollmentController extends Controller
 {

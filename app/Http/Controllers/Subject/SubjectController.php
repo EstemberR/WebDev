@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Subject;
 
 use App\Models\Subject\Students;
 use App\Models\Subject\Subjects;
 use Illuminate\Http\Request;
-use App\Http\Requests\Subject\StoreSubjectRequest;
+use App\Http\Requests\Subject\StoreSubject;
+use App\Http\Controllers\Controller;
 
 class SubjectController extends Controller
 {
@@ -15,7 +16,7 @@ class SubjectController extends Controller
         return view('Subjects.Subjects', compact('subjects'));
     }
 
-    public function store(StoreSubjectRequest $request)
+    public function store(StoreSubject $request)
     {
         try {
             Subjects::create($request->validated());

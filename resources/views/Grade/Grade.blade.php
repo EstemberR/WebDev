@@ -221,12 +221,19 @@ function saveGrades() {
     fetch('/grades/store', {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify(Object.fromEntries(formData))
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Close the manage grades modal
@@ -246,14 +253,21 @@ function saveGrades() {
                 showConfirmButton: false
             });
         } else {
-            throw new Error(data.message);
+            throw new Error(data.message || 'Failed to save grades');
         }
     })
     .catch(error => {
+        let errorMessage = 'Error saving grades';
+        if (error.errors) {
+            errorMessage = Object.values(error.errors).flat().join('<br>');
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: error.message || 'Failed to save grades'
+            html: errorMessage,
+            confirmButtonColor: '#ea580c'
         });
     });
 }

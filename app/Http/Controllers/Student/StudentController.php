@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Student;
 
 use App\Models\Student\Students;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\Student\StoreStudentRequest;
+use App\Http\Controllers\Controller;
 
 class StudentController extends Controller
 {
@@ -27,7 +28,7 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error. ' . $e->getMessage()
+                'message' => 'Error adding student: ' . $e->getMessage()
             ], 422);
         }
     }

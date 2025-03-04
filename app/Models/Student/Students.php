@@ -18,7 +18,8 @@ class Students extends Model
         'phone',
         'address',
         'date_of_birth',
-        'status'
+        'status',
+        'password'
     ];
 
     // Relationship with subjects (many-to-many)
