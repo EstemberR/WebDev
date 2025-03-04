@@ -7,6 +7,7 @@ use App\Models\Subject\Subjects;
 use Illuminate\Http\Request;
 use App\Http\Requests\Subject\StoreSubject;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class SubjectController extends Controller
 {
@@ -71,12 +72,31 @@ class SubjectController extends Controller
     public function destroy(Subjects $subject)
     {
         try {
+            DB::beginTransaction();
+            
+            // Store subject information in grades before deletion
+            foreach ($subject->grades as $grade) {
+                $grade->update([
+                    'subject_name' => $subject->name,
+                    'subject_code' => $subject->subject_code,
+                    'subject_id' => null  // Set subject_id to null since we're deleting the subject
+                ]);
+            }
+            
+            // Remove subject relationships without deleting grades
+            $subject->students()->detach();
+            
+            // Delete the subject
             $subject->delete();
+            
+            DB::commit();
+            
             return response()->json([
                 'success' => true,
-                'message' => 'Subject deleted successfully!'
+                'message' => 'Subject deleted successfully! All grades have been preserved.'
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Error deleting subject: ' . $e->getMessage()

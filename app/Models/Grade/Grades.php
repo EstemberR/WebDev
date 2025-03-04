@@ -14,6 +14,8 @@ class Grades extends Model
     protected $fillable = [
         'student_id',
         'subject_id',
+        'subject_name',
+        'subject_code',
         'midterm',
         'finals',
         'average',

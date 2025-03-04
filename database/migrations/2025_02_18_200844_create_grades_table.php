@@ -1,19 +1,4 @@
-public function up()
-{
-    Schema::create('grades', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-        $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
-        $table->decimal('midterm', 5, 2)->nullable();
-        $table->decimal('finals', 5, 2)->nullable();
-        $table->decimal('average', 5, 2)->nullable();
-        $table->string('remarks')->nullable();
-        $table->timestamps();
-        
-        // Ensure one grade entry per student per subject
-        $table->unique(['student_id', 'subject_id']);
-    });
-}<?php
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -29,14 +14,15 @@ return new class extends Migration
         Schema::create('grades', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
+            $table->foreignId('subject_id')->nullable()->constrained('subjects')->nullOnDelete();
+            $table->string('subject_name')->nullable();
+            $table->string('subject_code')->nullable();
             $table->decimal('midterm', 5, 2)->nullable();
             $table->decimal('finals', 5, 2)->nullable();
             $table->decimal('average', 5, 2)->nullable();
             $table->string('remarks')->nullable();
             $table->timestamps();
             
-            // Ensure one grade entry per student per subject
             $table->unique(['student_id', 'subject_id']);
         });
     }

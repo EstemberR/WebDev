@@ -210,6 +210,72 @@
     .sidenav .nav-link i {
         margin-bottom: 5px;
     }
+
+    .nav-item .collapse {
+        transition: all 0.3s ease;
+    }
+
+    .nav-item .nav-link {
+        position: relative;
+    }
+
+    .nav-item .nav-link .fa-chevron-down {
+        transition: transform 0.3s ease;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .nav-item .nav-link[aria-expanded="true"] .fa-chevron-down {
+        transform: translateY(-50%) rotate(180deg);
+    }
+
+    .nav-item .collapse .nav-link {
+        padding-left: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .nav-item .collapse .nav-link.active {
+        background: linear-gradient(310deg, #ea580c, #facc15);
+        color: white !important;
+    }
+
+    .nav-item .collapse .nav-link:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown-menu {
+        background: white;
+        border: 0;
+        border-radius: 0.5rem;
+        box-shadow: 0 8px 26px -4px rgb(20 20 20 / 15%), 0 8px 9px -5px rgb(20 20 20 / 6%);
+        padding: 0.5rem;
+    }
+
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background: linear-gradient(310deg, #ea580c, #facc15);
+        color: white;
+    }
+
+    .dropdown-item.active {
+        background: linear-gradient(310deg, #ea580c, #facc15);
+        color: white;
+    }
+
+    .nav-link[aria-expanded="true"] .fa-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .fa-chevron-down {
+        transition: transform 0.3s ease;
+    }
   </style>
 </head>
 
@@ -271,13 +337,30 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::routeIs('enrollment.index') ? 'active bg-gradient-white text-dark' : 'text-dark' }}" 
-                       href="{{ route('enrollment.index') }}">
+                    <a class="nav-link {{ Request::routeIs('enrollment.*') ? 'active bg-gradient-white text-dark' : 'text-dark' }}" 
+                       href="#enrollmentCollapse" 
+                       role="button">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="fas fa-list text-dark opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Enrollment</span>
                     </a>
+                    <div class="show" id="enrollmentCollapse">
+                        <ul class="nav ms-4 ps-3">
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::routeIs('enrollment.index') ? 'active bg-gradient-white text-dark' : 'text-dark' }}" 
+                                   href="{{ route('enrollment.index') }}">
+                                    <span class="nav-link-text">Available Students</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::routeIs('enrollment.enrolled') ? 'active bg-gradient-white text-dark' : 'text-dark' }}" 
+                                   href="{{ route('enrollment.enrolled') }}">
+                                    <span class="nav-link-text">Enrolled Students</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::routeIs('students.index') ? 'active bg-gradient-white text-dark' : 'text-dark' }}" 
@@ -704,6 +787,18 @@
         background: linear-gradient(310deg, #4b5563, #6b7280);
     }
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !isExpanded);
+            });
+        });
+    });
+  </script>
 </body>
 
 </html>

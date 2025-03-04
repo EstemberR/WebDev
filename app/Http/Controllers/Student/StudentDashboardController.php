@@ -7,6 +7,7 @@ use App\Models\Student\Students;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
+
 class StudentDashboardController extends Controller
 {
     public function index()
@@ -37,10 +38,16 @@ class StudentDashboardController extends Controller
 
     public function grades()
     {
-        $student = Students::with(['subjects', 'grades'])
-            ->where('email', Auth::user()->email)
-            ->first();
+        $student = Students::with([
+            'subjects',
+            'grades' => function($query) {
+                $query->orderBy('created_at', 'desc');
+            }
+        ])->where('email', Auth::user()->email)->first();
 
-        return view('Students.studentGrades', compact('student'));
+        // Get both current and historical grades
+        $allGrades = $student->grades;
+        
+        return view('Students.studentGrades', compact('student', 'allGrades'));
     }
 }

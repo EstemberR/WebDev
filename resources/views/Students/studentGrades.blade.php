@@ -25,24 +25,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($student->subjects as $subject)
-                                    @php
-                                        $grade = $student->grades->where('subject_id', $subject->id)->first();
-                                    @endphp
+                                @foreach($allGrades as $grade)
                                     <tr>
-                                        <td>{{ $subject->subject_code }}</td>
-                                        <td>{{ $subject->name }}</td>
+                                        <td>{{ $grade->subject_code }}</td>
+                                        <td>{{ $grade->subject_name }}</td>
                                         <td>{{ $grade->midterm ?? 'N/A' }}</td>
                                         <td>{{ $grade->finals ?? 'N/A' }}</td>
                                         <td>{{ $grade->average ?? 'N/A' }}</td>
                                         <td>
-                                            @if($grade)
-                                                <span class="badge badge-sm bg-gradient-{{ $grade->remarks === 'Passed' ? 'success' : 'danger' }}">
-                                                    {{ $grade->remarks }}
-                                                </span>
-                                            @else
-                                                <span class="badge badge-sm bg-gradient-secondary">Pending</span>
-                                            @endif
+                                            <span class="badge badge-sm bg-gradient-{{ $grade->remarks === 'Passed' ? 'success' : 'danger' }}">
+                                                {{ $grade->remarks }}
+                                            </span>
                                         </td>
                                     </tr>
                                 @endforeach

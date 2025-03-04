@@ -11,9 +11,20 @@ class EnrollmentController extends Controller
 {
     public function index()
     {
-        return view('enrollment', [
-            'students' => Students::whereDoesntHave('subjects')->get(),
-            'enrolledStudents' => Students::has('subjects')->with('subjects')->get(),
+        return view('enrollment.AvailableStudents', [
+            'students' => Students::whereDoesntHave('subjects')->whereDoesntHave('grades')->get(),
+            'subjects' => Subjects::all(),
+        ]);
+    }
+
+    public function enrolled()
+    {
+        return view('enrollment.enrolledStudents', [
+            'enrolledStudents' => Students::where(function($query) {
+                $query->has('subjects')->orHas('grades');
+            })->with(['subjects', 'grades' => function($query) {
+                $query->whereNull('subject_id');
+            }])->get(),
             'subjects' => Subjects::all(),
         ]);
     }
@@ -83,20 +94,20 @@ class EnrollmentController extends Controller
         try {
             $student = Students::findOrFail($studentId);
             
-            // Delete related grades first
-            $student->grades()->delete();
+            // Delete grades for deleted subjects (where subject_id is null)
+            $student->grades()->whereNull('subject_id')->delete();
             
             // Detach all subjects
             $student->subjects()->detach();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Student has been unenrolled successfully'
+                'message' => 'Student has been unenrolled successfully.'
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error unenrolling student'
+                'message' => 'Error unenrolling student: ' . $e->getMessage()
             ], 422);
         }
     }

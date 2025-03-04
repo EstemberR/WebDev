@@ -7,12 +7,16 @@ use App\Models\Student\Students;
 use Illuminate\Http\Request;
 use App\Http\Requests\Grade\StoreGrade;
 use App\Http\Controllers\Controller;
+use App\Models\Subject\Subjects;
 
 class GradeController extends Controller
 {
     public function index()
     {
-        $students = Students::has('subjects')->with(['subjects', 'grades'])->get();
+        $students = Students::with(['subjects', 'grades' => function($query) {
+            $query->orderBy('created_at', 'desc');
+        }])->whereHas('grades')->orWhereHas('subjects')->get();
+        
         return view('Grade.Grade', compact('students'));
     }
 
@@ -21,21 +25,25 @@ class GradeController extends Controller
         try {
             $validated = $request->validated();
             
-            // Calculate average of grade points directly
-            $average = ($validated['midterm'] + $validated['finals']) / 2;
+            // Get subject information before potential deletion
+            $subject = Subjects::findOrFail($validated['subject_id']);
             
-            // Round to 2 decimal places
+            // Calculate average
+            $average = ($validated['midterm'] + $validated['finals']) / 2;
             $average = round($average, 2);
             
             // Determine remarks
             $remarks = $average <= 3.00 ? 'Passed' : 'Failed';
 
+            // Store grade with subject information
             Grades::updateOrCreate(
                 [
                     'student_id' => $validated['student_id'],
                     'subject_id' => $validated['subject_id']
                 ],
                 [
+                    'subject_name' => $subject->name,
+                    'subject_code' => $subject->subject_code,
                     'midterm' => $validated['midterm'],
                     'finals' => $validated['finals'],
                     'average' => $average,

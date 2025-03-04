@@ -52,6 +52,7 @@ Route::middleware(['auth', 'user.type:instructor'])->group(function () {
     
     // Enrollment routes
     Route::get('/enrollment', [EnrollmentController::class, 'index'])->name('enrollment.index');
+    Route::get('/enrollment/enrolled', [EnrollmentController::class, 'enrolled'])->name('enrollment.enrolled');
     Route::post('/enrollment/enroll', [EnrollmentController::class, 'enroll'])->name('enrollment.enroll');
     Route::post('/enrollment/subjects', [EnrollmentController::class, 'updateSubjects'])->name('enrollment.subjects');
     Route::get('/api/student/{id}/subjects', [EnrollmentController::class, 'getStudentSubjects']);
