@@ -46,6 +46,10 @@
                                             @endforeach
                                         </td>
                                         <td>
+                                            <button class="btn bg-gradient-warning btn-sm me-2" 
+                                                    onclick="manageSubjects({{ $student->id }}, '{{ $student->name }}')">
+                                                Manage Subjects
+                                            </button>
                                             <button class="btn btn-danger btn-sm" 
                                                     onclick="confirmUnenroll({{ $student->id }})">
                                                 Unenroll
@@ -128,6 +132,41 @@
 }
 </style>
 
+<!-- Manage Subjects Modal -->
+<div class="modal fade" id="manageSubjectsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Subjects for <span id="studentName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="manageSubjectsForm" action="{{ route('enrollment.updateSubjects') }}" method="POST">
+                @csrf
+                <input type="hidden" name="student_id" id="manageStudentId">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Subjects</label>
+                        @foreach($subjects as $subject)
+                        <div class="form-check">
+                            <input class="form-check-input subject-checkbox" type="checkbox" 
+                                   name="subjects[]" value="{{ $subject->id }}" 
+                                   id="subject{{ $subject->id }}">
+                            <label class="form-check-label" for="subject{{ $subject->id }}">
+                                {{ $subject->name }} ({{ $subject->subject_code }})
+                            </label>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn bg-gradient-warning">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -176,7 +215,8 @@ function confirmUnenroll(studentId) {
             fetch(`/enrollment/unenroll/${studentId}`, {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
                 }
             })
             .then(response => response.json())
@@ -189,7 +229,8 @@ function confirmUnenroll(studentId) {
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        location.reload();
+                        // Redirect to available students page after successful unenrollment
+                        window.location.href = '/enrollment';
                     });
                 } else {
                     Swal.fire({
@@ -210,7 +251,62 @@ function confirmUnenroll(studentId) {
     });
 }
 
+function manageSubjects(studentId, studentName) {
+    document.getElementById('studentName').textContent = studentName;
+    document.getElementById('manageStudentId').value = studentId;
+    
+    // Reset all checkboxes
+    document.querySelectorAll('.subject-checkbox').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // Get current subjects and check the appropriate boxes
+    fetch(`/enrollment/getSubjects/${studentId}`)
+        .then(response => response.json())
+        .then(data => {
+            data.subjects.forEach(subjectId => {
+                const checkbox = document.getElementById(`subject${subjectId}`);
+                if (checkbox) checkbox.checked = true;
+            });
+            const modal = new bootstrap.Modal(document.getElementById('manageSubjectsModal'));
+            modal.show();
+        });
+}
 
+// Add this within your document.ready function
+$('#manageSubjectsForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    $.ajax({
+        url: $(this).attr('action'),
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            $('#manageSubjectsModal').modal('hide');
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: response.message,
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
+        },
+        error: function(xhr) {
+            let errorMessage = 'An error occurred while updating subjects.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage
+            });
+        }
+    });
+});
 </script>
 
 @endpush

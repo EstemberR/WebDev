@@ -170,6 +170,45 @@ $(document).ready(function() {
             }
         }
     });
+
+    // Add form submission handler
+    $('#enrollmentForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                // Hide the modal
+                $('#enrollmentModal').modal('hide');
+                
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: response.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(function() {
+                    // Reload the page to update the table
+                    window.location.reload();
+                });
+            },
+            error: function(xhr) {
+                let errorMessage = 'An error occurred while enrolling the student.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage
+                });
+            }
+        });
+    });
 });
 
 function enrollStudent(studentId) {
@@ -177,7 +216,5 @@ function enrollStudent(studentId) {
     const enrollmentModal = new bootstrap.Modal(document.getElementById('enrollmentModal'));
     enrollmentModal.show();
 }
-
-// Add your existing enrollment form submission handler here
 </script>
 @endpush

@@ -69,11 +69,11 @@ class EnrollmentController extends Controller
     {
         try {
             $student = Students::findOrFail($request->student_id);
-            $student->subjects()->sync($request->subjects);
+            $student->subjects()->sync($request->subjects ?? []);
             
             return response()->json([
                 'success' => true,
-                'message' => 'Subjects updated successfully'
+                'message' => 'Subjects updated successfully.'
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -94,8 +94,8 @@ class EnrollmentController extends Controller
         try {
             $student = Students::findOrFail($studentId);
             
-            // Delete grades for deleted subjects (where subject_id is null)
-            $student->grades()->whereNull('subject_id')->delete();
+            // Delete all grades for the student
+            $student->grades()->delete();
             
             // Detach all subjects
             $student->subjects()->detach();
@@ -110,5 +110,13 @@ class EnrollmentController extends Controller
                 'message' => 'Error unenrolling student: ' . $e->getMessage()
             ], 422);
         }
+    }
+
+    public function getSubjects($studentId)
+    {
+        $student = Students::findOrFail($studentId);
+        return response()->json([
+            'subjects' => $student->subjects->pluck('id')
+        ]);
     }
 }

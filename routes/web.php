@@ -57,6 +57,8 @@ Route::middleware(['auth', 'user.type:instructor'])->group(function () {
     Route::post('/enrollment/subjects', [EnrollmentController::class, 'updateSubjects'])->name('enrollment.subjects');
     Route::get('/api/student/{id}/subjects', [EnrollmentController::class, 'getStudentSubjects']);
     Route::delete('/enrollment/unenroll/{student}', [EnrollmentController::class, 'unenroll'])->name('enrollment.unenroll');
+    Route::get('/enrollment/getSubjects/{student}', [EnrollmentController::class, 'getSubjects'])->name('enrollment.getSubjects');
+    Route::post('/enrollment/updateSubjects', [EnrollmentController::class, 'updateSubjects'])->name('enrollment.updateSubjects');
 });
 
 Route::delete('/grades/delete/{student}/{subject}', [GradeController::class, 'destroy'])->name('grades.destroy');
